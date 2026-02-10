@@ -1,0 +1,22 @@
+.job-description-container {
+  padding: 40px;
+  min-height: 100vh;
+}
+
+.job-description-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.job-description-content h1 {
+  font-size: 36px;
+  color: #6B7FED;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.page-subtitle {
+  font-size: 18px;
+  color: #666;
+  margin: 0;
+}

@@ -1,52 +1,56 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './Signup.css';
+import React, { useState } from "react";
+import axios from "axios";
+import "./Signup.css";
 
 function Signup({ onSignupSuccess, onSwitchToLogin }) {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    profession: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      setError("Password must be at least 6 characters long");
       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/signup', {
+      const response = await axios.post("http://localhost:5000/api/signup", {
         name: formData.name,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
+        profession: formData.profession,
       });
 
       const { token, user } = response.data;
       onSignupSuccess(token, user);
     } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed. Please try again.');
+      setError(
+        err.response?.data?.message || "Signup failed. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -62,7 +66,7 @@ function Signup({ onSignupSuccess, onSwitchToLogin }) {
 
         <form onSubmit={handleSubmit} className="signup-form">
           {error && <div className="error-message">{error}</div>}
-          
+
           <div className="form-group">
             <label htmlFor="name">Full Name</label>
             <input
@@ -86,6 +90,18 @@ function Signup({ onSignupSuccess, onSwitchToLogin }) {
               onChange={handleChange}
               placeholder="Enter your email"
               required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="profession">Profession</label>
+            <input
+              type="text"
+              id="profession"
+              name="profession"
+              value={formData.profession}
+              onChange={handleChange}
+              placeholder="Enter your profession"
             />
           </div>
 
@@ -116,13 +132,13 @@ function Signup({ onSignupSuccess, onSwitchToLogin }) {
           </div>
 
           <button type="submit" className="signup-button" disabled={loading}>
-            {loading ? 'Creating Account...' : 'Sign Up'}
+            {loading ? "Creating Account..." : "Sign Up"}
           </button>
         </form>
 
         <div className="signup-footer">
           <p className="login-link">
-            Already have an account?{' '}
+            Already have an account?{" "}
             <button onClick={onSwitchToLogin} className="switch-button">
               Login here
             </button>
