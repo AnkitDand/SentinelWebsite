@@ -1,0 +1,10 @@
+{
+  "admin@example.com": {
+    "password": "scrypt:32768:8:1$OBRxiFP9Ey1OzUsD$d63d90c1432d4a4b91e58151583c0005928db5b8e36a883eb87754471b8c0b5e7933530128fd2f3c4974cfdd653ee683ebb691499f84980a7c60d9547cde1343",
+    "name": "Admin User"
+  },
+  "user@example.com": {
+    "password": "scrypt:32768:8:1$zu8A2DDOT5KeEaCA$98c37a4d1077ea18cee80848ef5655f62fd6dc96a3d101c010ba2f5afbfedaa071dc48cda891d02e08eba8f6be8de22d253f8f6777ff7864f6e9c08e077190d5",
+    "name": "Regular User"
+  }
+}
