@@ -3,6 +3,7 @@ import "./Dashboard.css";
 import Home from "./Home";
 import JobDescription from "./JobDescription";
 import Results from "./Results";
+import Ranking from "./Ranking";
 
 function Dashboard({ user, onLogout }) {
   const [activeTab, setActiveTab] = useState("home");
@@ -27,6 +28,8 @@ function Dashboard({ user, onLogout }) {
       case "results":
         // Pass user prop here
         return <Results user={user} jobDescriptionData={jobDescriptionData} />;
+      case "ranking":
+        return <Ranking user={user} />;
       default:
         return <Home user={user} />;
     }
@@ -52,14 +55,21 @@ function Dashboard({ user, onLogout }) {
             className={`nav-item ${activeTab === "job-description" ? "active" : ""}`}
             onClick={() => setActiveTab("job-description")}>
             <span className="nav-icon">📝</span>
-            <span>Job Description</span>
+            <span>Analyze Job</span>
           </button>
 
           <button
             className={`nav-item ${activeTab === "results" ? "active" : ""}`}
             onClick={() => setActiveTab("results")}>
             <span className="nav-icon">📊</span>
-            <span>Results</span>
+            <span>History</span>
+          </button>
+
+          <button
+            className={`nav-item ${activeTab === "ranking" ? "active" : ""}`}
+            onClick={() => setActiveTab("ranking")}>
+            <span className="nav-icon">🏆</span>
+            <span>Smart Rankings</span>
           </button>
         </nav>
 
