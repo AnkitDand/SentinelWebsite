@@ -1,20 +1,32 @@
-import React, { useState } from 'react';
-import './Dashboard.css';
-import Home from './Home';
-import JobDescription from './JobDescription';
-import Results from './Results';
+import React, { useState } from "react";
+import "./Dashboard.css";
+import Home from "./Home";
+import JobDescription from "./JobDescription";
+import Results from "./Results";
 
 function Dashboard({ user, onLogout }) {
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState("home");
+  const [jobDescriptionData, setJobDescriptionData] = useState(null);
+
+  const handleJobDescriptionSubmit = (data) => {
+    setJobDescriptionData(data);
+  };
 
   const renderContent = () => {
-    switch(activeTab) {
-      case 'home':
+    switch (activeTab) {
+      case "home":
         return <Home user={user} />;
-      case 'job-description':
-        return <JobDescription />;
-      case 'results':
-        return <Results />;
+      case "job-description":
+        // Pass user prop here
+        return (
+          <JobDescription
+            user={user}
+            onJobDescriptionSubmit={handleJobDescriptionSubmit}
+          />
+        );
+      case "results":
+        // Pass user prop here
+        return <Results user={user} jobDescriptionData={jobDescriptionData} />;
       default:
         return <Home user={user} />;
     }
@@ -27,28 +39,25 @@ function Dashboard({ user, onLogout }) {
         <div className="sidebar-header">
           <h2>Dashboard</h2>
         </div>
-        
+
         <nav className="sidebar-nav">
-          <button 
-            className={`nav-item ${activeTab === 'home' ? 'active' : ''}`}
-            onClick={() => setActiveTab('home')}
-          >
+          <button
+            className={`nav-item ${activeTab === "home" ? "active" : ""}`}
+            onClick={() => setActiveTab("home")}>
             <span className="nav-icon">🏠</span>
             <span>Home</span>
           </button>
-          
-          <button 
-            className={`nav-item ${activeTab === 'job-description' ? 'active' : ''}`}
-            onClick={() => setActiveTab('job-description')}
-          >
+
+          <button
+            className={`nav-item ${activeTab === "job-description" ? "active" : ""}`}
+            onClick={() => setActiveTab("job-description")}>
             <span className="nav-icon">📝</span>
             <span>Job Description</span>
           </button>
-          
-          <button 
-            className={`nav-item ${activeTab === 'results' ? 'active' : ''}`}
-            onClick={() => setActiveTab('results')}
-          >
+
+          <button
+            className={`nav-item ${activeTab === "results" ? "active" : ""}`}
+            onClick={() => setActiveTab("results")}>
             <span className="nav-icon">📊</span>
             <span>Results</span>
           </button>
@@ -72,9 +81,7 @@ function Dashboard({ user, onLogout }) {
       </div>
 
       {/* Main Content */}
-      <div className="main-content">
-        {renderContent()}
-      </div>
+      <div className="main-content">{renderContent()}</div>
     </div>
   );
 }
