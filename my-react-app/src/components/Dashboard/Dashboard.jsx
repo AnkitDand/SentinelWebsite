@@ -74,7 +74,6 @@ function Dashboard({ user, onLogout }) {
             </div>
           </div>
           <button onClick={onLogout} className="logout-button">
-            <span className="logout-icon">🚪</span>
             <span>Logout</span>
           </button>
         </div>
