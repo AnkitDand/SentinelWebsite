@@ -5,6 +5,7 @@ import JobAnalysisService from "./JobAnalysisService";
 function Results({ user, jobDescriptionData }) {
   const [analyses, setAnalyses] = useState([]);
   const [stats, setStats] = useState(null);
+  const [selectedAnalysis, setSelectedAnalysis] = useState(null);
 
   const loadAnalyses = () => {
     if (user?.email) {
@@ -31,6 +32,14 @@ function Results({ user, jobDescriptionData }) {
       JobAnalysisService.clearAll(user?.email);
       loadAnalyses();
     }
+  };
+
+  const handleCardClick = (analysis) => {
+    setSelectedAnalysis(analysis);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedAnalysis(null);
   };
 
   if (analyses.length === 0) {
@@ -67,14 +76,20 @@ function Results({ user, jobDescriptionData }) {
 
         <div className="analyses-grid">
           {analyses.map((analysis) => (
-            <div key={analysis.id} className="analysis-card">
+            <div
+              key={analysis.id}
+              className="analysis-card"
+              onClick={() => handleCardClick(analysis)}>
               <div className="analysis-card-header">
                 <div className="analysis-time">
                   <span className="time-icon">🕐</span>
                   {analysis.timestamp}
                 </div>
                 <button
-                  onClick={() => handleDelete(analysis.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(analysis.id);
+                  }}
                   className="delete-button"
                   title="Delete this analysis">
                   ✕
@@ -122,13 +137,135 @@ function Results({ user, jobDescriptionData }) {
                   dangerouslySetInnerHTML={{ __html: analysis.shapExplanation }}
                 />
               </div>
+
+              <div className="card-footer">
+                <span className="view-details-hint">
+                  Click to view details →
+                </span>
+              </div>
             </div>
           ))}
         </div>
+
+        {/* Detailed Modal View */}
+        {selectedAnalysis && (
+          <div className="modal-overlay" onClick={handleCloseModal}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>Analysis Details</h2>
+                <button className="modal-close" onClick={handleCloseModal}>
+                  ✕
+                </button>
+              </div>
+
+              <div className="modal-body">
+                <div className="modal-section">
+                  <div className="modal-meta">
+                    <div className="meta-item">
+                      <span className="meta-label">📅 Analyzed On:</span>
+                      <span className="meta-value">
+                        {selectedAnalysis.timestamp}
+                      </span>
+                    </div>
+                    <div className="meta-item">
+                      <span className="meta-label">🆔 Analysis ID:</span>
+                      <span className="meta-value">{selectedAnalysis.id}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="modal-section">
+                  <h3>Prediction Result</h3>
+                  {selectedAnalysis.confidence &&
+                  typeof selectedAnalysis.confidence === "object" ? (
+                    <div className="detailed-confidence">
+                      <div
+                        className={`confidence-badge-large ${selectedAnalysis.confidence.label?.toLowerCase()}`}>
+                        {selectedAnalysis.confidence.label || "N/A"}
+                      </div>
+                      {selectedAnalysis.confidence.confidences &&
+                        Array.isArray(
+                          selectedAnalysis.confidence.confidences,
+                        ) && (
+                          <div className="confidence-breakdown-detailed">
+                            {selectedAnalysis.confidence.confidences.map(
+                              (conf, idx) => (
+                                <div key={idx} className="conf-item-detailed">
+                                  <div className="conf-header-detailed">
+                                    <span className="conf-label-detailed">
+                                      {conf.label}
+                                    </span>
+                                    <span className="conf-percentage-detailed">
+                                      {(conf.confidence * 100).toFixed(2)}%
+                                    </span>
+                                  </div>
+                                  <div className="conf-bar-container">
+                                    <div
+                                      className={`conf-bar ${conf.label.toLowerCase()}`}
+                                      style={{
+                                        width: `${conf.confidence * 100}%`,
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              ),
+                            )}
+                          </div>
+                        )}
+                    </div>
+                  ) : (
+                    <div className="confidence-badge-large">
+                      {selectedAnalysis.confidence}
+                    </div>
+                  )}
+                </div>
+
+                <div className="modal-section">
+                  <h3>Job Description</h3>
+                  <div className="job-description-full">
+                    {selectedAnalysis.jobDescription}
+                  </div>
+                </div>
+
+                <div className="modal-section">
+                  <h3>SHAP Explanation</h3>
+                  <div className="shap-explanation-full">
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: selectedAnalysis.shapExplanation,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button
+                  className="delete-button-modal"
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        "Are you sure you want to delete this analysis?",
+                      )
+                    ) {
+                      handleDelete(selectedAnalysis.id);
+                      handleCloseModal();
+                    }
+                  }}>
+                  🗑️ Delete Analysis
+                </button>
+                <button
+                  className="close-button-modal"
+                  onClick={handleCloseModal}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
 export default Results;
-

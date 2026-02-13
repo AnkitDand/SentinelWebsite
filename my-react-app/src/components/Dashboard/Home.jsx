@@ -1,320 +1,300 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./Home.css";
 
 function Home({ user }) {
-  const [animatedStats, setAnimatedStats] = useState({
-    jobsScanned: 0,
-    scamsDetected: 0,
-    usersProtected: 0,
-    accuracyRate: 0,
-    warningsIssued: 0,
-    responseTime: 0,
-  });
+  const [expandedFaq, setExpandedFaq] = useState(null);
 
-  // Animate numbers on mount
-  useEffect(() => {
-    const targetStats = {
-      jobsScanned: 15847,
-      scamsDetected: 3241,
-      usersProtected: 8923,
-      accuracyRate: 94.7,
-      warningsIssued: 12456,
-      responseTime: 40,
-    };
+  const toggleFaq = (index) => {
+    setExpandedFaq(expandedFaq === index ? null : index);
+  };
 
-    const duration = 2000; // 2 seconds
-    const steps = 60;
-    const interval = duration / steps;
-
-    let currentStep = 0;
-
-    const timer = setInterval(() => {
-      currentStep++;
-      const progress = currentStep / steps;
-
-      setAnimatedStats({
-        jobsScanned: Math.floor(targetStats.jobsScanned * progress),
-        scamsDetected: Math.floor(targetStats.scamsDetected * progress),
-        usersProtected: Math.floor(targetStats.usersProtected * progress),
-        accuracyRate: (targetStats.accuracyRate * progress).toFixed(1),
-        warningsIssued: Math.floor(targetStats.warningsIssued * progress),
-        responseTime: (targetStats.responseTime * progress).toFixed(1),
-      });
-
-      if (currentStep >= steps) {
-        clearInterval(timer);
-        setAnimatedStats(targetStats);
-      }
-    }, interval);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  // Fake data for detection trends
-  const detectionData = [
-    { month: "Jan", fake: 245, genuine: 1876 },
-    { month: "Feb", fake: 312, genuine: 2103 },
-    { month: "Mar", fake: 289, genuine: 1954 },
-    { month: "Apr", fake: 401, genuine: 2234 },
-    { month: "May", fake: 378, genuine: 2087 },
-    { month: "Jun", fake: 456, genuine: 2456 },
+  // Real threat examples
+  const commonScams = [
+    {
+      icon: "💰",
+      title: "Upfront Payment Scams",
+      description:
+        "Fake employers asking for money for training, equipment, or background checks before hiring.",
+      severity: "Critical",
+    },
+    {
+      icon: "🎯",
+      title: "Task-Based Scams",
+      description:
+        "Promising easy money for simple tasks like rating products, often on Telegram or WhatsApp.",
+      severity: "High",
+    },
+    {
+      icon: "🏢",
+      title: "Fake Company Profiles",
+      description:
+        "Non-existent companies with copied logos and fabricated legitimacy indicators.",
+      severity: "High",
+    },
+    {
+      icon: "🔗",
+      title: "Phishing Links",
+      description:
+        "Malicious links disguised as job applications stealing personal information.",
+      severity: "Medium",
+    },
+    {
+      icon: "💳",
+      title: "Identity Theft",
+      description:
+        "Collecting sensitive documents (PAN, Aadhaar, bank details) under the guise of KYC verification.",
+      severity: "Critical",
+    },
   ];
 
-  // Risk categories
-  const riskCategories = [
-    { category: "Salary Scams", percentage: 32, color: "#ef4444" },
-    { category: "Fake Companies", percentage: 28, color: "#f59e0b" },
-    { category: "Phishing Links", percentage: 24, color: "#eab308" },
-    { category: "Data Theft", percentage: 16, color: "#6b7fed" },
+  // Red flags to watch for
+  const redFlags = [
+    {
+      icon: "⚠️",
+      text: "Promises of unrealistic salaries (e.g., ₹50,000/month for data entry)",
+    },
+    {
+      icon: "⚠️",
+      text: "Use of unprofessional communication channels (WhatsApp, Telegram for official hiring)",
+    },
+    {
+      icon: "⚠️",
+      text: "Poor grammar, spelling errors, and unprofessional language",
+    },
+    {
+      icon: "⚠️",
+      text: "Requests for money, bank details, or sensitive documents upfront",
+    },
+    {
+      icon: "⚠️",
+      text: "Vague job descriptions with no clear company information",
+    },
+    {
+      icon: "⚠️",
+      text: "Pressure tactics: 'Limited slots', 'Urgent hiring', 'Offer expires today'",
+    },
+    {
+      icon: "⚠️",
+      text: "Email addresses from free domains (Gmail, Yahoo) instead of company domains",
+    },
+    {
+      icon: "⚠️",
+      text: "No interview process or extremely casual hiring procedures",
+    },
   ];
 
-  // User experience distribution
-  const userExperience = [
-    { level: "Freshers (0-1yr)", count: 3421, risk: "High" },
-    { level: "Junior (1-3yr)", count: 2876, risk: "Medium" },
-    { level: "Mid-level (3-5yr)", count: 1834, risk: "Low" },
-    { level: "Senior (5+yr)", count: 792, risk: "Very Low" },
+  // FAQ data
+  const faqs = [
+    {
+      question: "How does SentinelXAI detect fake jobs?",
+      answer:
+        "We use DistilBERT, a state-of-the-art transformer model fine-tuned on thousands of verified fake and genuine job postings. The model analyzes linguistic patterns, structural elements, and contextual clues. We then use SHAP (SHapley Additive exPlanations) to highlight which specific words or phrases contributed to the classification, making our AI decisions transparent and explainable.",
+    },
+    {
+      question: "What makes this different from manual checking?",
+      answer:
+        "Manual checking is time-consuming and subjective. Our AI processes job descriptions in under 2 seconds and detects subtle patterns that humans might miss. More importantly, we provide explainable results - showing you exactly why a job is flagged as suspicious, helping you learn to identify red flags yourself.",
+    },
+    {
+      question: "Is my data safe when I use this tool?",
+      answer:
+        "Absolutely. We process job descriptions locally in your browser session and do not store or share the text you analyze. Your privacy is our priority. We only store analysis metadata (timestamp, result) if you're logged in, never the actual job description content.",
+    },
+    {
+      question: "Can scammers trick the AI?",
+      answer:
+        "While no system is 100% foolproof, our model is trained on evolving scam tactics and regularly updated. Even if a scam passes initial detection, our SHAP explanations help you make an informed decision by highlighting suspicious elements you should verify independently.",
+    },
+    {
+      question: "Who is most vulnerable to job scams?",
+      answer:
+        "Freshers and students are primary targets due to limited experience. However, experienced professionals are also targeted with sophisticated scams. Task-based scams particularly target people looking for part-time or work-from-home opportunities. Stay vigilant regardless of your experience level.",
+    },
+    {
+      question: "What should I do if I've already fallen for a scam?",
+      answer:
+        "1) Stop all communication immediately. 2) Do not send any more money or information. 3) Report to cybercrime.gov.in. 4) Block the scammer's contact. 5) Alert your bank if you shared financial information. 6) Document all evidence (screenshots, emails). Remember: it's not your fault, and reporting helps protect others.",
+    },
+  ];
+
+  // Technology explanation
+  const techStack = [
+    {
+      icon: "🤖",
+      title: "DistilBERT Model",
+      description:
+        "A lightweight yet powerful transformer model that understands context and semantics in job descriptions",
+      details: "Fine-tuned on 10,000+ labeled examples",
+    },
+    {
+      icon: "🔍",
+      title: "SHAP Analysis",
+      description:
+        "Explainable AI that highlights exactly which words influenced the prediction",
+      details: "Complete transparency in every decision",
+    },
+    {
+      icon: "⚡",
+      title: "Real-time Processing",
+      description: "Instant analysis with sub-2-second response times",
+      details: "Optimized inference pipeline",
+    },
+  ];
+
+  // Real statistics context
+  const situationContext = [
+    {
+      icon: "📊",
+      stat: "52%",
+      label: "of Indian job seekers",
+      context:
+        "have encountered at least one fake job posting (NASSCOM Report)",
+    },
+    {
+      icon: "💸",
+      stat: "₹1,200 Cr+",
+      label: "lost annually",
+      context: "to job-related fraud in India (National Crime Records Bureau)",
+    },
+    {
+      icon: "🎓",
+      stat: "68%",
+      label: "of victims",
+      context:
+        "are freshers or students without prior work experience (Cybercrime Cell Data)",
+    },
   ];
 
   return (
     <div className="home-container">
       <div className="home-content">
-        {/* Header Section */}
-        <div className="header-section">
-          <h1>Hello, {user?.name}!</h1>
-          <p className="welcome-text">
-            Welcome to SentinelXAI Dashboard - Protecting job seekers with
-            AI-powered detection
+        {/* Hero Section */}
+        <div className="hero-section">
+          <div className="hero-text">
+            <h1>Welcome to SentinelXAI</h1>
+            <p className="hero-subtitle">
+              AI-Powered Protection Against Job Scams
+            </p>
+            <p className="hero-description">
+              Don't let fake job postings steal your time, money, or personal
+              information. Our explainable AI helps you identify fraudulent
+              opportunities before they harm you.
+            </p>
+          </div>
+        </div>
+
+        {/* Situation Context */}
+        <div className="section-header">
+          <h2>🚨 The Current Situation</h2>
+          <p className="section-subtitle">
+            Understanding the scale of the job scam epidemic in India
           </p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="stats-grid">
-          <div className="stat-card stat-card-1">
-            <div className="stat-icon">📊</div>
-            <div className="stat-content">
-              <h3>{animatedStats.jobsScanned.toLocaleString()}</h3>
-              <p>Jobs Scanned</p>
+        <div className="stats-context-grid">
+          {situationContext.map((item, index) => (
+            <div key={index} className="context-card">
+              <div className="context-icon">{item.icon}</div>
+              <div className="context-stat">{item.stat}</div>
+              <div className="context-label">{item.label}</div>
+              <div className="context-text">{item.context}</div>
             </div>
-            <div className="stat-trend positive">↑ 12% this month</div>
-          </div>
-
-          <div className="stat-card stat-card-2">
-            <div className="stat-icon">🛡️</div>
-            <div className="stat-content">
-              <h3>{animatedStats.scamsDetected.toLocaleString()}</h3>
-              <p>Scams Detected</p>
-            </div>
-            <div className="stat-trend negative">↓ 8% vs last month</div>
-          </div>
-
-          <div className="stat-card stat-card-3">
-            <div className="stat-icon">👥</div>
-            <div className="stat-content">
-              <h3>{animatedStats.usersProtected.toLocaleString()}</h3>
-              <p>Users Protected</p>
-            </div>
-            <div className="stat-trend positive">↑ 23% this month</div>
-          </div>
-
-          <div className="stat-card stat-card-4">
-            <div className="stat-icon">🎯</div>
-            <div className="stat-content">
-              <h3>{animatedStats.accuracyRate}%</h3>
-              <p>Accuracy Rate</p>
-            </div>
-            <div className="stat-trend positive">DistilBERT + SHAP</div>
-          </div>
-
-          <div className="stat-card stat-card-5">
-            <div className="stat-icon">⚠️</div>
-            <div className="stat-content">
-              <h3>{animatedStats.warningsIssued.toLocaleString()}</h3>
-              <p>Warnings Issued</p>
-            </div>
-            <div className="stat-trend positive">↑ 15% this month</div>
-          </div>
-
-          <div className="stat-card stat-card-6">
-            <div className="stat-icon">⚡</div>
-            <div className="stat-content">
-              <h3>{animatedStats.responseTime}s</h3>
-              <p>Avg Response Time</p>
-            </div>
-            <div className="stat-trend positive">Real-time Analysis</div>
-          </div>
+          ))}
         </div>
 
-        {/* Charts Row */}
-        <div className="charts-row">
-          {/* Detection Trends Chart */}
-          <div className="chart-card">
-            <h2>Monthly Detection Trends</h2>
-            <p className="chart-subtitle">Fake vs Genuine Job Postings</p>
-            <div className="bar-chart">
-              {detectionData.map((data, index) => {
-                const total = data.fake + data.genuine;
-                const fakePercentage = (data.fake / total) * 100;
-                const genuinePercentage = (data.genuine / total) * 100;
-
-                return (
-                  <div key={index} className="bar-group">
-                    <div className="bar-stack">
-                      <div
-                        className="bar-segment genuine"
-                        style={{
-                          height: `${genuinePercentage * 2}px`,
-                          animationDelay: `${index * 0.1}s`,
-                        }}
-                        title={`Genuine: ${data.genuine}`}></div>
-                      <div
-                        className="bar-segment fake"
-                        style={{
-                          height: `${fakePercentage * 2}px`,
-                          animationDelay: `${index * 0.1}s`,
-                        }}
-                        title={`Fake: ${data.fake}`}></div>
-                    </div>
-                    <span className="bar-label">{data.month}</span>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="chart-legend">
-              <div className="legend-item">
-                <span className="legend-color genuine"></span>
-                <span>Genuine Jobs</span>
-              </div>
-              <div className="legend-item">
-                <span className="legend-color fake"></span>
-                <span>Fake Jobs</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Risk Categories */}
-          <div className="chart-card">
-            <h2>Scam Categories</h2>
-            <p className="chart-subtitle">Most Common Types Detected</p>
-            <div className="risk-chart">
-              {riskCategories.map((risk, index) => (
-                <div key={index} className="risk-item">
-                  <div className="risk-header">
-                    <span className="risk-name">{risk.category}</span>
-                    <span className="risk-percentage">{risk.percentage}%</span>
-                  </div>
-                  <div className="risk-bar-container">
-                    <div
-                      className="risk-bar"
-                      style={{
-                        width: `${risk.percentage}%`,
-                        background: risk.color,
-                        animationDelay: `${index * 0.15}s`,
-                      }}></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* User Experience Table */}
-        <div className="chart-card full-width">
-          <h2>User Experience Distribution</h2>
-          <p className="chart-subtitle">
-            Personalized Protection Based on Experience Level
+        {/* Common Scams Section */}
+        <div className="section-header">
+          <h2>🎭 Common Job Scam Types</h2>
+          <p className="section-subtitle">
+            Recognize these tactics before they target you
           </p>
-          <div className="experience-table">
-            {userExperience.map((exp, index) => (
-              <div
-                key={index}
-                className="experience-row"
-                style={{ animationDelay: `${index * 0.1}s` }}>
-                <div className="exp-level">
-                  <span className="exp-icon">👤</span>
-                  <span className="exp-text">{exp.level}</span>
-                </div>
-                <div className="exp-count">
-                  <span className="count-number">
-                    {exp.count.toLocaleString()}
-                  </span>
-                  <span className="count-label">users</span>
-                </div>
-                <div className="exp-risk">
-                  <span
-                    className={`risk-badge ${exp.risk.toLowerCase().replace(" ", "-")}`}>
-                    {exp.risk} Risk
-                  </span>
-                </div>
-                <div className="exp-bar">
-                  <div
-                    className="exp-bar-fill"
-                    style={{
-                      width: `${(exp.count / 3421) * 100}%`,
-                      animationDelay: `${index * 0.1}s`,
-                    }}></div>
-                </div>
+        </div>
+
+        <div className="scams-grid">
+          {commonScams.map((scam, index) => (
+            <div key={index} className="scam-card">
+              <div className="scam-header">
+                <span className="scam-icon">{scam.icon}</span>
+                <span
+                  className={`severity-badge ${scam.severity.toLowerCase()}`}>
+                  {scam.severity}
+                </span>
+              </div>
+              <h3>{scam.title}</h3>
+              <p>{scam.description}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Red Flags Checklist */}
+        <div className="section-header">
+          <h2>🚩 Red Flags Checklist</h2>
+          <p className="section-subtitle">
+            If you see ANY of these signs, proceed with extreme caution
+          </p>
+        </div>
+
+        <div className="red-flags-container">
+          <div className="red-flags-list">
+            {redFlags.map((flag, index) => (
+              <div key={index} className="red-flag-item">
+                <span className="flag-icon">{flag.icon}</span>
+                <span className="flag-text">{flag.text}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* AI Model Info */}
-        <div className="charts-row">
-          <div className="chart-card">
-            <h2>AI Technology Stack</h2>
-            <div className="tech-stack">
-              <div className="tech-item">
-                <div className="tech-icon">🤖</div>
-                <h3>DistilBERT</h3>
-                <p>Transformer model for text classification</p>
-              </div>
-              <div className="tech-item">
-                <div className="tech-icon">🔍</div>
-                <h3>SHAP & LIME</h3>
-                <p>Explainable AI for transparency</p>
-              </div>
-              <div className="tech-item">
-                <div className="tech-icon">⚡</div>
-                <h3>Real-time Detection</h3>
-                <p>Instant analysis and warnings</p>
-              </div>
-            </div>
-          </div>
+        {/* Technology Section */}
+        <div className="section-header">
+          <h2>🔬 Our Technology</h2>
+          <p className="section-subtitle">How AI helps you stay safe</p>
+        </div>
 
-          <div className="chart-card">
-            <h2>System Features</h2>
-            <div className="features-list">
-              <div className="feature-item">
-                <span className="feature-icon">✅</span>
-                <div>
-                  <h4>Explainable Decisions</h4>
-                  <p>Clear reasoning for every detection</p>
-                </div>
-              </div>
-              <div className="feature-item">
-                <span className="feature-icon">👤</span>
-                <div>
-                  <h4>Personalized Warnings</h4>
-                  <p>Tailored alerts based on experience</p>
-                </div>
-              </div>
-              <div className="feature-item">
-                <span className="feature-icon">📚</span>
-                <div>
-                  <h4>User Education</h4>
-                  <p>Learn to identify scams independently</p>
-                </div>
-              </div>
-              <div className="feature-item">
-                <span className="feature-icon">🎯</span>
-                <div>
-                  <h4>High Accuracy</h4>
-                  <p>94.7% detection accuracy rate</p>
-                </div>
-              </div>
+        <div className="tech-grid">
+          {techStack.map((tech, index) => (
+            <div key={index} className="tech-card">
+              <div className="tech-icon-large">{tech.icon}</div>
+              <h3>{tech.title}</h3>
+              <p>{tech.description}</p>
+              <div className="tech-detail">{tech.details}</div>
             </div>
-          </div>
+          ))}
+        </div>
+
+        {/* FAQ Section */}
+        <div className="section-header">
+          <h2>❓ Frequently Asked Questions</h2>
+          <p className="section-subtitle">
+            Everything you need to know about job scam detection
+          </p>
+        </div>
+
+        <div className="faq-container">
+          {faqs.map((faq, index) => (
+            <div key={index} className="faq-item">
+              <div
+                className={`faq-question ${expandedFaq === index ? "active" : ""}`}
+                onClick={() => toggleFaq(index)}>
+                <span>{faq.question}</span>
+                <span className="faq-toggle">
+                  {expandedFaq === index ? "−" : "+"}
+                </span>
+              </div>
+              {expandedFaq === index && (
+                <div className="faq-answer">{faq.answer}</div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* CTA Section */}
+        <div className="cta-section">
+          <h2>Ready to Protect Yourself?</h2>
+          <p>
+            Navigate to the <strong>Analyze</strong> page to scan your job
+            description with AI-powered detection
+          </p>
         </div>
       </div>
     </div>

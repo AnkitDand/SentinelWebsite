@@ -2,11 +2,22 @@
   box-sizing: border-box;
 }
 
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+}
+
 .signup-container {
   width: 100%;
   max-width: 540px;
   margin: 0 auto;
   padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .signup-card {
@@ -18,6 +29,10 @@
   overflow: hidden;
   position: relative;
   animation: slideUp 0.6s ease-out;
+  width: 100%;
+  max-height: 95vh;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes slideUp {
@@ -38,6 +53,7 @@
   text-align: center;
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .signup-header::before {
@@ -73,6 +89,7 @@
   position: relative;
   z-index: 1;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 0;
 }
 
 .signup-header p {
@@ -81,11 +98,33 @@
   font-weight: 400;
   position: relative;
   z-index: 1;
+  margin: 0;
 }
 
 .signup-form {
-  padding: 45px 40px 40px;
+  padding: 35px 40px 30px;
   background: linear-gradient(to bottom, #ffffff 0%, #f8f9ff 100%);
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  max-height: calc(95vh - 200px);
+}
+
+.signup-form::-webkit-scrollbar {
+  width: 8px;
+}
+
+.signup-form::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.signup-form::-webkit-scrollbar-thumb {
+  background: #6b7fed;
+  border-radius: 4px;
+}
+
+.signup-form::-webkit-scrollbar-thumb:hover {
+  background: #8b5fbf;
 }
 
 .form-group {
@@ -212,10 +251,11 @@
 }
 
 .signup-footer {
-  padding: 10px 40px;
+  padding: 20px 40px;
   background: linear-gradient(to bottom, #f8f9ff 0%, #f0f2ff 100%);
   border-top: 1px solid #e7eaff;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .login-link {
@@ -260,17 +300,61 @@
 @media (max-width: 600px) {
   .signup-container {
     padding: 10px;
+    align-items: flex-start;
+    padding-top: 20px;
+  }
+
+  .signup-card {
+    max-height: none;
+    min-height: auto;
   }
 
   .signup-header {
-    padding: 50px 30px;
+    padding: 30px 30px;
+  }
+
+  .signup-header h1 {
+    font-size: 32px;
   }
 
   .signup-form {
-    padding: 35px 30px 30px;
+    padding: 30px 25px 25px;
+    max-height: none;
+    overflow-y: visible;
   }
 
   .signup-footer {
-    padding: 10px 30px;
+    padding: 20px 30px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group input {
+    padding: 14px 18px;
+  }
+}
+
+@media (max-height: 700px) {
+  .signup-header {
+    padding: 20px 40px;
+  }
+
+  .signup-header h1 {
+    font-size: 32px;
+    margin-bottom: 8px;
+  }
+
+  .signup-form {
+    padding: 25px 40px 20px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .signup-footer {
+    padding: 15px 40px;
   }
 }

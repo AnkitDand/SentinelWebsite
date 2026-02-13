@@ -10,16 +10,39 @@ function App() {
   const [view, setView] = useState('login'); // 'login' or 'signup'
 
   useEffect(() => {
+    // 1. Read from storage
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
-    
-    if (token && userData) {
-      setIsAuthenticated(true);
-      setUser(JSON.parse(userData));
+
+    // 2. rigorous check: make sure data exists AND isn't the string "undefined"
+    if (token && userData && userData !== "undefined") {
+      try {
+        // 3. Try to parse. If this fails, the catch block handles it.
+        const parsedUser = JSON.parse(userData);
+        setIsAuthenticated(true);
+        setUser(parsedUser);
+      } catch (error) {
+        // 4. If error (e.g. invalid JSON), clear storage to fix the crash loop
+        console.error("Corrupt data found in localStorage. Clearing...", error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setIsAuthenticated(false);
+        setUser(null);
+      }
+    } else {
+      // 5. If data is missing or explicitly "undefined", ensure clean state
+      if (userData === "undefined") {
+        localStorage.removeItem('user');
+      }
     }
   }, []);
 
   const handleLoginSuccess = (token, userData) => {
+    // Safety check: Don't save if userData is undefined
+    if (!userData) {
+      console.error("Attempted to save undefined user data");
+      return;
+    }
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
     setIsAuthenticated(true);
@@ -27,6 +50,11 @@ function App() {
   };
 
   const handleSignupSuccess = (token, userData) => {
+    // Safety check: Don't save if userData is undefined
+    if (!userData) {
+      console.error("Attempted to save undefined user data");
+      return;
+    }
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
     setIsAuthenticated(true);

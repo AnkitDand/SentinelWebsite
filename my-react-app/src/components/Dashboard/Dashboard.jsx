@@ -40,7 +40,7 @@ function Dashboard({ user, onLogout }) {
       {/* Sidebar */}
       <div className="sidebar">
         <div className="sidebar-header">
-          <h2>Dashboard</h2>
+          <h2>SentinelXAI</h2>
         </div>
 
         <nav className="sidebar-nav">
