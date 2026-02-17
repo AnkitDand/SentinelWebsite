@@ -1,4 +1,4 @@
-/* Container & Layout */
+/* ─── Container & Layout ─────────────────────────────────────────────────── */
 .ranking-container {
   padding: 2rem;
   max-width: 900px;
@@ -6,7 +6,7 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Header Section */
+/* ─── Header ─────────────────────────────────────────────────────────────── */
 .ranking-header {
   margin-bottom: 2rem;
   text-align: center;
@@ -31,9 +31,7 @@
   text-underline-offset: 4px;
 }
 
-/* ---------------------------------------------------------
-   CARD STYLES
---------------------------------------------------------- */
+/* ─── Card List ──────────────────────────────────────────────────────────── */
 .ranking-list {
   display: flex;
   flex-direction: column;
@@ -56,30 +54,26 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
 
-/* --- Logic Visuals: Relevant vs Irrelevant --- */
-
-/* Relevant Cards: Pop out, Green Accent */
+/* Relevant — green left border */
 .card-relevant {
   border-left: 6px solid #2ecc71;
   background-color: #ffffff;
 }
 
-/* Irrelevant Cards: Pushed back, Gray/Orange Accent */
+/* Irrelevant — grey left border, slightly dimmed */
 .card-irrelevant {
   opacity: 0.9;
   background: #fdfdfd;
   border-left: 6px solid #95a5a6;
 }
 
-/* --- Logic Visuals: Fake / High Risk (Real < 50%) --- */
+/* Fake / High Risk — full red border + tinted bg */
 .card-fake {
-  border: 2px solid #e74c3c !important; /* Full Red Border */
-  background-color: #fff8f8 !important; /* Light Red Background */
+  border: 2px solid #e74c3c !important;
+  background-color: #fff8f8 !important;
 }
 
-/* ---------------------------------------------------------
-   CARD INTERNAL CONTENT
---------------------------------------------------------- */
+/* ─── Rank Number Box ────────────────────────────────────────────────────── */
 .rank-number {
   background: #2c3e50;
   color: white;
@@ -92,12 +86,13 @@
   min-width: 80px;
 }
 
-/* Turn rank number box RED for fake jobs */
+/* Red rank box for fake jobs */
 .ranking-card.card-fake .rank-number {
   background-color: #d32f2f !important;
   border-right: 1px solid #b71c1c;
 }
 
+/* ─── Card Content ───────────────────────────────────────────────────────── */
 .card-content {
   padding: 1.5rem;
   width: 100%;
@@ -114,9 +109,7 @@
   gap: 1rem;
 }
 
-/* ---------------------------------------------------------
-   BADGES & SCORES
---------------------------------------------------------- */
+/* ─── Authenticity Score Badge ───────────────────────────────────────────── */
 .score-badge {
   display: flex;
   flex-direction: column;
@@ -124,7 +117,7 @@
 }
 
 .score-label {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #7f8c8d;
@@ -140,13 +133,64 @@
 }
 
 .score-low {
-  color: #c0392b; /* Red text for low scores */
+  color: #c0392b;
 }
 
+/* ─── CV Match Badge (Mini Ring) ─────────────────────────────────────────── */
+.cv-match-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.cv-mini-ring-wrap {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  margin-top: 4px;
+}
+
+.cv-mini-ring {
+  width: 56px;
+  height: 56px;
+}
+
+.cv-mini-score {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.cv-mini-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* Nudge hint for real jobs with no CV */
+.cv-no-resume-hint {
+  font-size: 12px;
+  color: #9ca3af;
+  background: #f9fafb;
+  border: 1px dashed #d1d5db;
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* ─── Status Badges ──────────────────────────────────────────────────────── */
 .badges-container {
   display: flex;
   gap: 0.8rem;
   flex-wrap: wrap;
+  align-items: flex-start;
 }
 
 .status-badge {
@@ -161,7 +205,7 @@
 
 .status-match {
   background: #e8f8f5;
-  color: #2ecc71;
+  color: #27ae60;
   border: 1px solid #d4efdf;
 }
 
@@ -171,7 +215,7 @@
   border: 1px solid #fad7a0;
 }
 
-/* The "Not safe for you to apply" Alert Badge */
+/* Animated "Not safe to apply" badge for fake jobs */
 .status-fake-alert {
   background-color: #ffebee;
   color: #c62828;
@@ -182,28 +226,12 @@
 }
 
 @keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  10%,
-  30%,
-  50%,
-  70%,
-  90% {
-    transform: translateX(-2px);
-  }
-  20%,
-  40%,
-  60%,
-  80% {
-    transform: translateX(2px);
-  }
+  0%,  100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+  20%, 40%, 60%, 80% { transform: translateX(2px); }
 }
 
-/* ---------------------------------------------------------
-   JOB DESCRIPTION BOX
---------------------------------------------------------- */
+/* ─── Job Description Snippet ────────────────────────────────────────────── */
 .job-description-box {
   background: #f8f9fa;
   padding: 1.2rem;
@@ -231,9 +259,7 @@
   font-size: 0.95rem;
 }
 
-/* ---------------------------------------------------------
-   ALERTS
---------------------------------------------------------- */
+/* ─── Smart Alerts ───────────────────────────────────────────────────────── */
 .smart-alert {
   padding: 0.8rem 1rem;
   border-radius: 6px;
@@ -243,14 +269,12 @@
   gap: 0.6rem;
 }
 
-/* Yellow Warning (High Real Score but Irrelevant) */
 .alert-warning {
   background: #fff3cd;
   color: #856404;
   border: 1px solid #ffeeba;
 }
 
-/* Red Danger (Real Score < 50%) */
 .alert-danger {
   background: #f8d7da;
   color: #721c24;
@@ -258,21 +282,19 @@
   font-weight: 600;
 }
 
-/* ---------------------------------------------------------
-   UTILITY
---------------------------------------------------------- */
+/* ─── Utility ────────────────────────────────────────────────────────────── */
 .loading,
 .empty-state {
   text-align: center;
   padding: 4rem;
   color: #7f8c8d;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   background: #f8f9fa;
   border-radius: 12px;
   border: 2px dashed #bdc3c7;
 }
 
-/* Responsive Tweaks */
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
   .ranking-card {
     flex-direction: column;

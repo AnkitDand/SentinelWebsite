@@ -1,3 +1,4 @@
+/* ─── Page Layout ─────────────────────────────────────────────────────────── */
 .job-description-container {
   padding: 40px;
   min-height: 100%;
@@ -28,7 +29,7 @@
   margin: 0;
 }
 
-/* Form Styles */
+/* ─── Form ───────────────────────────────────────────────────────────────── */
 .jd-form {
   background: white;
   padding: 32px;
@@ -56,9 +57,8 @@
   line-height: 1.6;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
-    Cantarell, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
   resize: vertical;
   transition: all 0.3s ease;
   box-sizing: border-box;
@@ -79,7 +79,165 @@
   color: #999;
 }
 
-/* Error Message */
+/* ─── CV Upload Section ──────────────────────────────────────────────────── */
+.cv-upload-section {
+  margin-bottom: 28px;
+  padding: 20px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f0f4ff 0%, #f5f0ff 100%);
+  border: 1.5px solid #c7d2fe;
+}
+
+.cv-upload-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.cv-upload-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #3730a3;
+}
+
+.cv-upload-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Dropzone */
+.cv-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 20px;
+  border: 2px dashed #818cf8;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: center;
+}
+
+.cv-dropzone:hover {
+  border-color: #6b7fed;
+  background: #f8f9ff;
+  box-shadow: 0 0 0 3px rgba(107, 127, 237, 0.1);
+}
+
+.cv-dropzone-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.cv-dropzone-text {
+  font-size: 14px;
+  color: #4338ca;
+  font-weight: 600;
+}
+
+.cv-dropzone-formats {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* Parsing indicator */
+.cv-parsing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #6b7fed;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.cv-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(107, 127, 237, 0.2);
+  border-top-color: #6b7fed;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Uploaded file pill */
+.cv-uploaded-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: white;
+  border: 1.5px solid #86efac;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.cv-file-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.cv-file-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cv-file-ready {
+  font-size: 12px;
+  font-weight: 700;
+  color: #16a34a;
+  background: #dcfce7;
+  padding: 3px 10px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.cv-remove-btn {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.cv-remove-btn:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* CV error */
+.cv-error-message {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: #fff1f2;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  color: #991b1b;
+  font-size: 13px;
+}
+
+/* Scope note */
+.cv-scope-note {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* ─── Error Message ──────────────────────────────────────────────────────── */
 .error-message {
   display: flex;
   align-items: center;
@@ -97,7 +255,7 @@
   font-size: 18px;
 }
 
-/* Submit Button */
+/* ─── Submit Button ──────────────────────────────────────────────────────── */
 .submit-button {
   width: 100%;
   padding: 16px 24px;
@@ -133,7 +291,7 @@
   font-size: 20px;
 }
 
-/* Spinner Animation */
+/* Spinner */
 .spinner {
   width: 18px;
   height: 18px;
@@ -149,16 +307,9 @@
   }
 }
 
-/* Results Section */
+/* ─── Results Section ────────────────────────────────────────────────────── */
 .results-section {
   margin-top: 40px;
-}
-
-.results-section h2 {
-  font-size: 28px;
-  color: #333;
-  margin-bottom: 24px;
-  font-weight: 600;
 }
 
 .result-card {
@@ -188,14 +339,7 @@
   font-weight: 600;
 }
 
-.explanation-subtitle {
-  font-size: 13px;
-  color: #666;
-  margin: 4px 0 0 0;
-  font-style: italic;
-}
-
-/* Confidence Card */
+/* ─── Confidence Card ────────────────────────────────────────────────────── */
 .confidence-card {
   border-left-color: #6b7fed;
   background: linear-gradient(
@@ -206,7 +350,7 @@
 }
 
 .confidence-display {
-  padding: 20px 0;
+  padding: 10px 0;
 }
 
 .confidence-label {
@@ -221,27 +365,11 @@
   margin-bottom: 24px;
 }
 
-.confidence-value {
-  font-size: 42px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #6b7fed 0%, #8b5fbf 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-align: center;
-  padding: 20px 0;
-}
-
-.confidence-breakdown {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
 .confidence-item {
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-bottom: 12px;
 }
 
 .conf-label {
@@ -266,6 +394,14 @@
   border-radius: 12px;
 }
 
+.conf-bar.fake {
+  background: linear-gradient(90deg, #ff0051 0%, #ff4081 100%);
+}
+
+.conf-bar.real {
+  background: linear-gradient(90deg, #008afa 0%, #42a5f5 100%);
+}
+
 .conf-value {
   font-size: 14px;
   font-weight: 600;
@@ -274,7 +410,96 @@
   text-align: right;
 }
 
-/* Explanation Card */
+/* ─── CV Match Score Card ────────────────────────────────────────────────── */
+.cv-match-card {
+  border-left-color: #10b981;
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.04) 0%,
+    rgba(5, 150, 105, 0.06) 100%
+  );
+}
+
+.cv-match-display {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.cv-match-score-ring {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+
+.cv-ring-svg {
+  width: 120px;
+  height: 120px;
+}
+
+.cv-ring-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cv-ring-score {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.cv-ring-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+  text-align: center;
+}
+
+.cv-match-info {
+  flex: 1;
+  min-width: 180px;
+}
+
+.cv-match-detail {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0 0 8px;
+}
+
+.cv-match-file {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ─── CV Hint Card ───────────────────────────────────────────────────────── */
+.cv-hint-card {
+  border-left-color: #f59e0b;
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.05) 0%,
+    rgba(251, 191, 36, 0.07) 100%
+  );
+}
+
+.cv-hint-text {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ─── SHAP Explanation Card ──────────────────────────────────────────────── */
 .explanation-card {
   border-left-color: #8b5fbf;
 }
@@ -289,47 +514,25 @@
   overflow-y: auto;
 }
 
-/* JD Preview Card */
-.jd-preview-card {
-  border-left-color: #6b7fed;
-}
-
-.jd-preview {
-  padding: 16px;
-  background: #f9f9f9;
-  border-radius: 8px;
-  font-size: 14px;
-  line-height: 1.6;
-  color: #555;
-  white-space: pre-wrap;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-/* Scrollbar Styling */
-.shap-content::-webkit-scrollbar,
-.jd-preview::-webkit-scrollbar {
+.shap-content::-webkit-scrollbar {
   width: 8px;
 }
 
-.shap-content::-webkit-scrollbar-track,
-.jd-preview::-webkit-scrollbar-track {
+.shap-content::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 4px;
 }
 
-.shap-content::-webkit-scrollbar-thumb,
-.jd-preview::-webkit-scrollbar-thumb {
+.shap-content::-webkit-scrollbar-thumb {
   background: #6b7fed;
   border-radius: 4px;
 }
 
-.shap-content::-webkit-scrollbar-thumb:hover,
-.jd-preview::-webkit-scrollbar-thumb:hover {
+.shap-content::-webkit-scrollbar-thumb:hover {
   background: #8b5fbf;
 }
 
-/* Responsive */
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .job-description-container {
     padding: 20px;
@@ -343,11 +546,13 @@
     font-size: 28px;
   }
 
-  .results-section h2 {
-    font-size: 24px;
+  .cv-upload-header {
+    flex-direction: column;
+    gap: 4px;
   }
 
-  .confidence-value {
-    font-size: 36px;
+  .cv-match-display {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

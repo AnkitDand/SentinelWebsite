@@ -1,3 +1,4 @@
+/* ─── Page Layout ─────────────────────────────────────────────────────────── */
 .results-container {
   padding: 40px;
   min-height: 100%;
@@ -47,7 +48,7 @@
   transform: translateY(-1px);
 }
 
-/* No Data State */
+/* ─── No Data State ──────────────────────────────────────────────────────── */
 .no-data {
   text-align: center;
   padding: 80px 20px;
@@ -75,7 +76,7 @@
   margin: 0;
 }
 
-/* Analyses Grid */
+/* ─── Analyses Grid ──────────────────────────────────────────────────────── */
 .analyses-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -99,6 +100,7 @@
   border-left-width: 6px;
 }
 
+/* ─── Card Header ────────────────────────────────────────────────────────── */
 .analysis-card-header {
   display: flex;
   justify-content: space-between;
@@ -137,7 +139,7 @@
   color: #dc3545;
 }
 
-/* Confidence Badge */
+/* ─── Confidence Badge ───────────────────────────────────────────────────── */
 .analysis-confidence {
   margin-bottom: 16px;
 }
@@ -193,7 +195,50 @@
   font-weight: 700;
 }
 
-/* Job Description Preview */
+/* ─── CV Match Inline Badge (on card) ───────────────────────────────────── */
+.cv-match-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: #f8f9ff;
+  border: 1px solid #e0e7ff;
+  border-radius: 8px;
+}
+
+.cv-inline-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.cv-inline-score {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.cv-inline-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.cv-inline-file {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-left: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+}
+
+/* ─── Job Description Preview ────────────────────────────────────────────── */
 .analysis-jd-preview {
   margin-bottom: 16px;
 }
@@ -212,7 +257,7 @@
   margin: 0;
 }
 
-/* SHAP Preview */
+/* ─── SHAP Preview ───────────────────────────────────────────────────────── */
 .analysis-shap-preview {
   margin-top: 16px;
   padding-top: 16px;
@@ -243,7 +288,7 @@
   background: linear-gradient(to bottom, transparent, white);
 }
 
-/* Card Footer */
+/* ─── Card Footer ────────────────────────────────────────────────────────── */
 .card-footer {
   margin-top: 16px;
   padding-top: 12px;
@@ -264,7 +309,7 @@
   display: inline-block;
 }
 
-/* Modal Styles */
+/* ─── Modal ──────────────────────────────────────────────────────────────── */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -282,12 +327,8 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .modal-content {
@@ -304,14 +345,8 @@
 }
 
 @keyframes slideUp {
-  from {
-    transform: translateY(40px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
 .modal-header {
@@ -377,10 +412,10 @@
   border-bottom: 2px solid #6b7fed;
 }
 
-/* Modal Meta Section */
+/* Modal Meta */
 .modal-meta {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
   background: #f8f9ff;
   padding: 20px;
@@ -404,6 +439,7 @@
   font-size: 15px;
   color: #333;
   font-weight: 600;
+  word-break: break-word;
 }
 
 /* Detailed Confidence */
@@ -497,6 +533,67 @@
   background: linear-gradient(90deg, #008afa 0%, #42a5f5 100%);
 }
 
+/* ─── Modal CV Match Section ─────────────────────────────────────────────── */
+.modal-cv-match {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  padding: 24px;
+  border-radius: 10px;
+}
+
+.modal-cv-ring-wrap {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+
+.modal-cv-ring-svg {
+  width: 120px;
+  height: 120px;
+}
+
+.modal-cv-ring-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-cv-ring-score {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.modal-cv-ring-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+  text-align: center;
+}
+
+.modal-cv-info {
+  flex: 1;
+  min-width: 180px;
+}
+
+.modal-cv-info p {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.6;
+  margin: 0 0 6px;
+}
+
 /* Job Description Full */
 .job-description-full {
   background: #f8f9fa;
@@ -571,7 +668,7 @@
   box-shadow: 0 4px 12px rgba(107, 127, 237, 0.3);
 }
 
-/* Responsive */
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 1200px) {
   .analyses-grid {
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -600,7 +697,6 @@
     font-size: 28px;
   }
 
-  /* Modal Responsive */
   .modal-overlay {
     padding: 0;
   }
@@ -644,5 +740,10 @@
   .close-button-modal {
     width: 100%;
     justify-content: center;
+  }
+
+  .modal-cv-match {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

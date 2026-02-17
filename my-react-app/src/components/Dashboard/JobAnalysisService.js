@@ -1,13 +1,18 @@
 // Service for managing job description analyses
 const STORAGE_KEY = "jobDescriptionAnalyses";
+const RESUME_KEY = "userResumes"; // Per-user active resume store (keyed by email)
 
 export const JobAnalysisService = {
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // ANALYSIS CRUD
+  // ─────────────────────────────────────────────────────────────────────────
+
   // Get all analyses for a specific user
   getAll: (userEmail) => {
     try {
       const data = localStorage.getItem(STORAGE_KEY);
       const allAnalyses = data ? JSON.parse(data) : [];
-      // Filter by the specific user's email
       if (!userEmail) return [];
       return allAnalyses.filter((analysis) => analysis.userEmail === userEmail);
     } catch (error) {
@@ -29,30 +34,30 @@ export const JobAnalysisService = {
   },
 
   // Add a new analysis
+  // Now stores resumeText, resumeFileName, and cvMatchScore per analysis.
+  // This means different JDs can have different resumes attached.
   add: (analysisData, userEmail) => {
     try {
-      // Get raw data from storage directly to append
       const data = localStorage.getItem(STORAGE_KEY);
       const allAnalyses = data ? JSON.parse(data) : [];
 
       if (!userEmail) throw new Error("User email is required to save data");
 
-      // Create the analysis object with timestamp, ID, and USER EMAIL
       const newAnalysis = {
         id: Date.now(),
-        userEmail: userEmail, // Store who owns this data
+        userEmail: userEmail,
         timestamp: new Date().toLocaleString(),
         confidence: analysisData.confidence,
         shapExplanation: analysisData.shapExplanation,
         jobDescription: analysisData.jobDescription,
+        // ── CV fields (per-analysis, not shared across users) ──────────────
+        resumeText: analysisData.resumeText || null,
+        resumeFileName: analysisData.resumeFileName || null,
+        cvMatchScore: analysisData.cvMatchScore ?? null, // null = no CV uploaded
       };
 
-      // Add to the beginning of the array
       const updatedAnalyses = [newAnalysis, ...allAnalyses];
-
-      // Save to localStorage
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
-
       return newAnalysis;
     } catch (error) {
       console.error("Error adding analysis:", error);
@@ -65,12 +70,9 @@ export const JobAnalysisService = {
     try {
       const data = localStorage.getItem(STORAGE_KEY);
       let allAnalyses = data ? JSON.parse(data) : [];
-
-      // Filter out the specific ID
       const updatedAnalyses = allAnalyses.filter(
-        (analysis) => analysis.id !== id,
+        (analysis) => analysis.id !== id
       );
-
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
       return true;
     } catch (error) {
@@ -84,12 +86,9 @@ export const JobAnalysisService = {
     try {
       const data = localStorage.getItem(STORAGE_KEY);
       let allAnalyses = data ? JSON.parse(data) : [];
-
-      // Keep only analyses that DO NOT belong to this user
       const remainingAnalyses = allAnalyses.filter(
-        (analysis) => analysis.userEmail !== userEmail,
+        (analysis) => analysis.userEmail !== userEmail
       );
-
       localStorage.setItem(STORAGE_KEY, JSON.stringify(remainingAnalyses));
       return true;
     } catch (error) {
@@ -104,21 +103,15 @@ export const JobAnalysisService = {
     const total = analyses.length;
 
     if (total === 0) {
-      return {
-        total: 0,
-        fake: 0,
-        real: 0,
-        fakePercentage: 0,
-        realPercentage: 0,
-      };
+      return { total: 0, fake: 0, real: 0, fakePercentage: 0, realPercentage: 0 };
     }
 
     const fake = analyses.filter(
-      (a) => a.confidence?.label?.toLowerCase() === "fake",
+      (a) => a.confidence?.label?.toLowerCase() === "fake"
     ).length;
 
     const real = analyses.filter(
-      (a) => a.confidence?.label?.toLowerCase() === "real",
+      (a) => a.confidence?.label?.toLowerCase() === "real"
     ).length;
 
     return {
@@ -128,6 +121,56 @@ export const JobAnalysisService = {
       fakePercentage: ((fake / total) * 100).toFixed(1),
       realPercentage: ((real / total) * 100).toFixed(1),
     };
+  },
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // ACTIVE RESUME STORE (per-user, session-scoped)
+  // Resume is stored separately from analyses so the user can upload once
+  // and have it auto-fill for subsequent JDs in the same session.
+  // When a user logs out or a different user logs in, their resume is NOT
+  // shown — each email key is independent.
+  // ─────────────────────────────────────────────────────────────────────────
+
+  // Save the active resume for a specific user
+  saveActiveResume: (userEmail, resumeText, fileName) => {
+    try {
+      const data = localStorage.getItem(RESUME_KEY);
+      const resumes = data ? JSON.parse(data) : {};
+      resumes[userEmail] = {
+        resumeText,
+        fileName,
+        savedAt: Date.now(),
+      };
+      localStorage.setItem(RESUME_KEY, JSON.stringify(resumes));
+    } catch (error) {
+      console.error("Error saving active resume:", error);
+    }
+  },
+
+  // Get the active resume for a user (returns null if none saved)
+  getActiveResume: (userEmail) => {
+    try {
+      const data = localStorage.getItem(RESUME_KEY);
+      if (!data) return null;
+      const resumes = JSON.parse(data);
+      return resumes[userEmail] || null;
+    } catch (error) {
+      return null;
+    }
+  },
+
+  // Clear the active resume for a user
+  // Call this on logout or when the user explicitly removes their CV.
+  clearActiveResume: (userEmail) => {
+    try {
+      const data = localStorage.getItem(RESUME_KEY);
+      if (!data) return;
+      const resumes = JSON.parse(data);
+      delete resumes[userEmail];
+      localStorage.setItem(RESUME_KEY, JSON.stringify(resumes));
+    } catch (error) {
+      console.error("Error clearing active resume:", error);
+    }
   },
 };
 
