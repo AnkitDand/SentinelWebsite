@@ -7,7 +7,15 @@ import datetime
 from functools import wraps
 import os
 
+# --- NEW IMPORTS FOR SMART SEMANTIC MATCHING ---
+from sentence_transformers import SentenceTransformer, util
+
 app = Flask(__name__)
+
+# Load the NLP model once when the server starts
+print("Loading Sentence Transformer model...")
+nlp_model = SentenceTransformer('all-MiniLM-L6-v2')
+print("Model loaded successfully!")
 
 # --- Configuration ---
 app.config['SECRET_KEY'] = 'your-secret-key-change-this-in-production'
@@ -32,7 +40,6 @@ class User(db.Model):
 # --- Database Initialization ---
 with app.app_context():
     db.create_all()
-    # Add default users if database is empty
     if User.query.count() == 0:
         default_users = [
             User(
@@ -64,11 +71,8 @@ def token_required(f):
         try:
             if token.startswith('Bearer '):
                 token = token[7:]
-            
-            # Using HS256 algorithm explicitly
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
             current_user = User.query.filter_by(email=data['email']).first()
-            
             if not current_user:
                 return jsonify({'message': 'User not found'}), 401
         except Exception as e:
@@ -78,107 +82,119 @@ def token_required(f):
 
     return decorated
 
+# --- NEW HELPER: SEMANTIC NLP MATCHING ---
+def compute_nlp_similarity(text1, text2):
+    """
+    Uses Sentence Transformers to compare the semantic meaning of two strings.
+    Returns a score between 0.0 and 100.0
+    """
+    if not text1 or not text2:
+        return 0.0
+    
+    try:
+        # Convert texts to dense semantic vectors
+        embeddings1 = nlp_model.encode(text1, convert_to_tensor=True)
+        embeddings2 = nlp_model.encode(text2, convert_to_tensor=True)
+        
+        # Calculate cosine similarity of the dense vectors
+        cosine_scores = util.cos_sim(embeddings1, embeddings2)
+        
+        # Extract the value from the tensor object
+        similarity = cosine_scores[0][0].item()
+        
+        # Force Python float and ensure it doesn't dip below 0
+        return float(round(max(similarity, 0) * 100, 1))
+    except Exception as e:
+        print(f"Error in semantic matching: {e}")
+        return 0.0
+
 # ============================================================================
-# SMART RANKING ALGORITHM (Merged from New Code)
+# SMART RANKING ALGORITHM
 # ============================================================================
 @app.route('/api/rank_jobs', methods=['POST'])
 @token_required
 def rank_jobs(current_user):
     data = request.get_json()
     analyses = data.get('analyses', [])
-    
+
     if not analyses:
         return jsonify([]), 200
-    
-    # 1. Determine User Profession
+
     user_profession = (current_user.profession or "Student").lower().strip()
-    profession_keywords = set(user_profession.split())
-    
     processed_results = []
-    
+
     for item in analyses:
         try:
+            job_description = item.get('jobDescription', "")
+            resume_text = item.get('resumeText', "")
+
             # --- A. Extract Real Value Score ---
             confidence_data = item.get('confidence', {})
-            # Handle case where confidence is a string or object
-            if isinstance(confidence_data, str):
-                 # Skip simple string confidences or handle differently
-                 continue
-                 
-            conf_list = confidence_data.get('confidences', [])
-            
-            # Find the score for "REAL" label
-            real_data = next((c for c in conf_list if c['label'].upper() == 'REAL'), None)
-            base_real_score = (real_data['confidence'] * 100) if real_data else 0.0
-            
-            # --- B. Check Professional Relevance ---
-            job_description = item.get('jobDescription', "").lower()
-            is_relevant = False
-            
-            # Keyword matching logic
-            if 'developer' in user_profession or 'engineer' in user_profession:
-                dev_keywords = ['software', 'developer', 'engineer', 'react', 'node', 'python', 'java', 'web', 'coding']
-                is_relevant = any(kw in job_description for kw in dev_keywords)
-            elif 'student' in user_profession:
-                student_keywords = ['intern', 'internship', 'fresher', 'graduate', 'entry level', 'student']
-                is_relevant = any(kw in job_description for kw in student_keywords)
-            else:
-                is_relevant = any(kw in job_description for kw in profession_keywords if len(kw) > 3)
+            base_real_score = 0.0
+            if isinstance(confidence_data, dict):
+                conf_list = confidence_data.get('confidences', [])
+                real_data = next((c for c in conf_list if c['label'].upper() == 'REAL'), None)
+                base_real_score = (real_data['confidence'] * 100) if real_data else 0.0
 
-            # --- C. Safety Check ---
-            # Any job with Real Score < 50 is considered Unsafe/Fake
+            # --- B. Safety Check ---
             is_safe = base_real_score >= 50
             risk_level = "LOW" if is_safe else "HIGH"
 
-            # --- D. Apply Scoring Logic & Multipliers ---
+            # --- C. NLP Relevance Score (Profession vs Job Description) ---
+            profession_match_score = compute_nlp_similarity(user_profession, job_description)
+            # FORCE Python bool to prevent JSON serialization errors
+            is_relevant = bool(profession_match_score > 10.0) 
+
+            # --- D. Apply Scoring Logic ---
             personalized_score = base_real_score
             alert = None
 
             if is_relevant:
-                # MATCH: Boost score (1.2x)
                 personalized_score = min(base_real_score * 1.2, 100.0)
             else:
-                # MISMATCH
                 if base_real_score > 60:
-                    # Logic: If Real > 60% (but irrelevant), penalize to push down (0.6x)
                     personalized_score = base_real_score * 0.6
-                    alert = f"Authentic job, but not relevant to {current_user.profession}."
-                else:
-                    # Logic: If Real < 60%, it's already low, keep as is
-                    personalized_score = base_real_score
+                    alert = f"Authentic job, but might not align with a {user_profession} role."
 
-            # Add specific alert for Fake jobs regardless of relevance
             if not is_safe:
                 alert = "CRITICAL: Potential Fake Job detected."
+
+            # --- E. TRUE CV Match Score (Resume vs Job Description) ---
+            cv_match_score = None
+            composite_score = personalized_score
+
+            if is_safe and resume_text:
+                cv_match_score = compute_nlp_similarity(resume_text, job_description)
+                # Composite = 60% authenticity + 40% CV match
+                composite_score = (0.60 * personalized_score) + (0.40 * cv_match_score)
 
             processed_results.append({
                 **item,
                 "base_real_score": round(base_real_score, 1),
                 "personalized_score": round(personalized_score, 1),
+                "composite_score": round(composite_score, 1),
+                "cvMatchScore": cv_match_score,
                 "is_relevant": is_relevant,
                 "is_safe": is_safe,
                 "relevance_alert": alert,
                 "risk_level": risk_level,
                 "user_profession": current_user.profession
             })
-            
+
         except Exception as e:
             print(f"Skipping error item: {e}")
             continue
 
-    # --- E. Sorting Strategy ---
-    # Priority 1: Safety (Safe jobs appear first)
-    # Priority 2: Relevance (Relevant jobs appear next)
-    # Priority 3: Score (Highest score within the category)
+    # --- F. Sorting Strategy ---
     processed_results.sort(
-        key=lambda x: (x['is_safe'], x['is_relevant'], x['personalized_score']), 
+        key=lambda x: (x['is_safe'], x['composite_score']),
         reverse=True
     )
-    
+
     return jsonify(processed_results), 200
 
 # ============================================================================
-# AUTH ROUTES (Merged from Old Code)
+# AUTH ROUTES
 # ============================================================================
 
 @app.route('/api/signup', methods=['POST'])
