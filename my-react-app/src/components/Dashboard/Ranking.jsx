@@ -154,13 +154,14 @@ const Ranking = ({ user }) => {
                         🚨 Not safe to apply
                       </div>
                     )}
-                    <div
-                      className={`status-badge ${
-                        job.is_relevant ? "status-match" : "status-mismatch"
-                      }`}
-                    >
-                      {job.is_relevant ? "✓ Match" : "⚠ Mismatch"}
-                    </div>
+                    {job.risk_level !== "HIGH" && (
+                      <div
+                        className={`status-badge ${
+                          job.is_relevant ? "status-match" : "status-mismatch"
+                        }`}>
+                        {job.is_relevant ? "✓ Match" : "⚠ Mismatch"}
+                      </div>
+                    )}
                   </div>
                 </div>
 
