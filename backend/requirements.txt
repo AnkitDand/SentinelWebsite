@@ -3,6 +3,4 @@ flask_cors
 flask_sqlalchemy
 werkzeug
 jwt
-datetime
-functools
 sentence_transformers
