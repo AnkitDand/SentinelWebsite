@@ -244,7 +244,7 @@ function JobDescription({ user, onJobDescriptionSubmit }) {
       const token = localStorage.getItem("token"); 
 
       // 4. Send to Python Backend to get CV Match Score and Relevance
-      const pyResponse = await fetch("http://localhost:5000/api/rank_jobs", {
+      const pyResponse = await fetch("https://sentinelwebsite.onrender.com/api/rank_jobs", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -23,7 +23,7 @@ const Ranking = ({ user }) => {
         }
 
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:5000/api/rank_jobs", {
+        const response = await fetch("https://sentinelwebsite.onrender.com/api/rank_jobs", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
